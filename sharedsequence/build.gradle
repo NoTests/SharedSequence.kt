@@ -1,0 +1,71 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+kapt {
+    generateStubs = true
+}
+
+android {
+    compileSdkVersion 26
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += "src/main/kotlin"
+        main.java.srcDirs += "${buildDir.absolutePath}/tmp/kapt/debug/kotlinGenerated/"
+    }
+
+}
+
+//buildscript {
+//    ext.kotlin_version = '1.1.51'
+//    repositories {
+//        mavenCentral()
+//    }
+//    dependencies {
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+//    }
+//}
+//repositories {
+//    mavenCentral()
+//}
+//compileKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
+//compileTestKotlin {
+//    kotlinOptions {
+//        jvmTarget = "1.8"
+//    }
+//}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.6'
+    compile group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.0.1'
+
+    kapt project(":SharedSequenceProcessor")
+    compileOnly project(":SharedSequenceAnnotations")
+}

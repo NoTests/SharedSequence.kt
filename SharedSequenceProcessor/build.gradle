@@ -1,0 +1,41 @@
+apply plugin: 'java-library'
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile project(":SharedSequenceAnnotations")
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.6'
+}
+
+sourceCompatibility = "1.7"
+targetCompatibility = "1.7"
+
+sourceSets {
+    main.java.srcDirs += "src/main/kotlin"
+}
+
+buildscript {
+    ext.kotlin_version = '1.1.51'
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+repositories {
+    mavenCentral()
+}
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
