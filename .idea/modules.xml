@@ -2,11 +2,12 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/SharedSequence.kt.iml" filepath="$PROJECT_DIR$/SharedSequence.kt.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceAnnotations/SharedSequenceAnnotations.iml" filepath="$PROJECT_DIR$/SharedSequenceAnnotations/SharedSequenceAnnotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceExample.iml" filepath="$PROJECT_DIR$/SharedSequenceExample.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceProcessor/SharedSequenceProcessor.iml" filepath="$PROJECT_DIR$/SharedSequenceProcessor/SharedSequenceProcessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/sharedsequence/sharedsequence.iml" filepath="$PROJECT_DIR$/sharedsequence/sharedsequence.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SharedSequence/sharedsequence.iml" filepath="$PROJECT_DIR$/SharedSequence/sharedsequence.iml" />
     </modules>
   </component>
 </project>
