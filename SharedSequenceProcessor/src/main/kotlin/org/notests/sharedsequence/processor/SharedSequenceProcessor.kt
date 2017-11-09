@@ -7,8 +7,18 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
+import java.net.URI
 
 class SharedSequenceProcessor : AbstractProcessor() {
+  fun getTemplateContent(template: String): String {
+      try {
+        return URI("file:/Users/kzaher/Projects/SharedSequence.kt/SharedSequenceProcessor/src/main/resources/$template").toURL().readText()
+      }
+      catch(e: Exception) {
+        return javaClass.classLoader.getResource(template).readText()
+      }
+  }
+
   override fun process(annotations: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
 
     processingEnv.messager.printMessage(Diagnostic.Kind.NOTE, "Started")
@@ -21,7 +31,7 @@ class SharedSequenceProcessor : AbstractProcessor() {
       val objectName = el.simpleName.toString()
       val sharedSequenceName = el.getAnnotation(SharedSequence::class.java).value
 
-      val source = javaClass.classLoader.getResource("template.vm").readText()
+      val source = getTemplateContent("template.kt")
 
       val replacedSource = source.replace("_Package_", pckg)
         .replace("_Template_", sharedSequenceName)
@@ -29,7 +39,6 @@ class SharedSequenceProcessor : AbstractProcessor() {
         .replace("_share_", "$objectName.share")
 
       processingEnv.messager.printMessage(Diagnostic.Kind.NOTE, replacedSource)
-
 
       File("$kotlinGenerated/$objectName.kt/${pckg.replace(".", "/")}", "${sharedSequenceName}.kt").apply {
         parentFile.mkdirs()
@@ -51,7 +60,7 @@ class SharedSequenceProcessor : AbstractProcessor() {
 
         val pckg = processingEnv.elementUtils.getPackageOf(el1).qualifiedName.toString()
 
-        val source = javaClass.classLoader.getResource("templatetemplate.vm").readText()
+        val source = getTemplateContent("templatetemplate.kt")
         val replacedSource = source.replace("_Package_", pckg)
           .replace("_Template_", sharedSequenceName1)
           .replace("_Template2_", sharedSequenceName2)

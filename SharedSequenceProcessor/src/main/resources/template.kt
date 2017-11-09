@@ -14,7 +14,7 @@ open class _Template_<Element> constructor(source: Observable<Element>) {
 
   companion object {
     val scheduler: Scheduler
-      get() {
+      get() { 
         return _scheduler_
       }
 

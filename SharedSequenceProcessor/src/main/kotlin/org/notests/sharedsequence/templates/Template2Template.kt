@@ -13,8 +13,8 @@ fun <Element, SequenceOfElements: _Template2_<Element>> _Template_<SequenceOfEle
 fun <Element, T1> _Template_<Element>.withLatestFrom(other: _Template2_<T1>): _Template_<Pair<Element, T1>> =
   _Template_<Pair<Element, T1>>(this.source.withLatestFrom(other.asObservable(), BiFunction { t1, t2 -> Pair(t1, t2) }))
 
-fun <Element, T1, R> _Template_<Element>.withLatestFrom(other: _Template2_<T1>, combiner: (Element, T1) -> R): _Template_<R> =
-  this.withLatestFrom(other).map { combiner(it.first, it.second) }
+//fun <Element, T1, R> _Template_<Element>.withLatestFrom(other: _Template2_<T1>, combiner: (Element, T1) -> R): _Template_<R> =
+//  this.withLatestFrom(other).map { combiner(it.first, it.second) }
 
 fun <Element, Result> _Template_<Element>.flatMap(func: (Element) -> _Template2_<Result>): _Template2_<Result> =
   _Template2_<Result>(this.source.flatMap {
