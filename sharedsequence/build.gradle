@@ -1,9 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-
-kapt {
-    generateStubs = true
-}
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 26
@@ -23,10 +20,13 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+
+        }
     }
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
-        main.java.srcDirs += "${buildDir.absolutePath}/tmp/kapt/debug/kotlinGenerated/"
+        main.java.srcDirs += "${buildDir.absolutePath}/generated/source/kaptKotlin/"
     }
 
 }
