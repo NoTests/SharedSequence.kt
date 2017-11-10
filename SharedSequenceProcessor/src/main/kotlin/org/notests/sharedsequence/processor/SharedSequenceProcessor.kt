@@ -7,26 +7,17 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
 import javax.tools.Diagnostic
-import java.net.URI
 
 
-fun processTemplate(template: String, packageName: String, replacements: HashMap<String, String>): String {
-  fun setPackageName(template: String, packageName: String): String =
-          (listOf("package " + packageName) + template.split("\n", "\r").drop(1)).joinToString("\n")
+fun SharedSequenceProcessor.processTemplate(template: String, packageName: String, replacements: HashMap<String, String>): String {
+    fun setPackageName(template: String, packageName: String): String =
+            (listOf("package " + packageName) + template.split("\n", "\r").drop(1)).joinToString("\n")
 
-  fun getTemplateContent(template: String): String {
-    try {
-      // horrible hack because for some reason build environment caches templates
-      // help needed
-      return URI("file:/Users/kzaher/Projects/SharedSequence.kt/SharedSequenceProcessor/src/main/resources/$template").toURL().readText()
-    } catch (e: Exception) {
-      return SharedSequenceProcessor.javaClass.classLoader.getResource(template).readText()
+    fun getTemplateContent(template: String) = this::class.java.classLoader.getResource(template).readText()
+
+    return setPackageName(getTemplateContent(template), packageName).replace(Regex("_(\\w|\\d)+_")) {
+        replacements[it.value]!!
     }
-  }
-
-  return setPackageName(getTemplateContent(template), packageName).replace(Regex("_(\\w|\\d)+_")) {
-    replacements[it.value]!!
-  }
 }
 
 class SharedSequenceProcessor : AbstractProcessor() {
