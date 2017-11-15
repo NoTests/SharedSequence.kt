@@ -1,9 +1,5 @@
 package org.notests.sharedsequence
 
-/**
- * Created by kzaher on 11/7/17.
- */
-
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -12,7 +8,6 @@ import org.notests.sharedsequence.annotations.SharedSequence
 /**
  * Created by markotron on 11/6/17.
  */
-
 @SharedSequence("Signal")
 object SignalTraits : SharingTrait {
     override val scheduler: Scheduler

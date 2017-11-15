@@ -2,6 +2,30 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'SharedSequence'
+
+    publishedGroupId = 'org.notests'
+    libraryName = 'sharedsequence'
+    artifact = 'sharedsequence'
+
+    libraryDescription = 'Shared sequence'
+
+    siteUrl = 'https://github.com/NoTests/SharedSequence.kt'
+    gitUrl = 'https://github.com/NoTests/SharedSequence.kt.git'
+
+    libraryVersion = '0.1.1'
+
+    developerId = 'notests'
+    developerName = 'Marko Bozic'
+    developerEmail = 'markotron@gmail.com'
+
+    licenseName = 'The Apache Software License, Version 2.0'
+    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+    allLicenses = ["Apache-2.0"]
+}
+
 android {
     compileSdkVersion 26
 
@@ -34,29 +58,6 @@ android {
 
 }
 
-//buildscript {
-//    ext.kotlin_version = '1.1.51'
-//    repositories {
-//        mavenCentral()
-//    }
-//    dependencies {
-//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//    }
-//}
-//repositories {
-//    mavenCentral()
-//}
-//compileKotlin {
-//    kotlinOptions {
-//        jvmTarget = "1.8"
-//    }
-//}
-//compileTestKotlin {
-//    kotlinOptions {
-//        jvmTarget = "1.8"
-//    }
-//}
-
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
@@ -72,3 +73,6 @@ dependencies {
     kapt project(":SharedSequenceProcessor")
     compileOnly project(":SharedSequenceAnnotations")
 }
+
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'

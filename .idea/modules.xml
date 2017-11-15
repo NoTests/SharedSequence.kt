@@ -7,7 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceExample.iml" filepath="$PROJECT_DIR$/SharedSequenceExample.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceProcessor/SharedSequenceProcessor.iml" filepath="$PROJECT_DIR$/SharedSequenceProcessor/SharedSequenceProcessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SharedSequence/sharedsequence.iml" filepath="$PROJECT_DIR$/SharedSequence/sharedsequence.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sharedsequence/sharedsequence.iml" filepath="$PROJECT_DIR$/sharedsequence/sharedsequence.iml" />
     </modules>
   </component>
 </project>
