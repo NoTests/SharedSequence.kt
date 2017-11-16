@@ -1,1 +1,0 @@
-../../../../SharedSequenceProcessor/src/main/kotlin/org/notests/sharedsequence/templates/Template.kt

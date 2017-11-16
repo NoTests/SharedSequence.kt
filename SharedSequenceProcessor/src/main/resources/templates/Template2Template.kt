@@ -1,4 +1,4 @@
-package org.notests.sharedsequence.templates
+package templates
 
 /**
  * Created by markotron on 11/6/17.

@@ -10,14 +10,14 @@ import javax.tools.Diagnostic
 
 
 fun SharedSequenceProcessor.processTemplate(template: String, packageName: String, replacements: HashMap<String, String>): String {
-    fun setPackageName(template: String, packageName: String): String =
-            (listOf("package " + packageName) + template.split("\n", "\r").drop(1)).joinToString("\n")
+  fun setPackageName(template: String, packageName: String): String =
+    (listOf("package " + packageName) + template.split("\n", "\r").drop(1)).joinToString("\n")
 
-    fun getTemplateContent(template: String) = this::class.java.classLoader.getResource(template).readText()
+  fun getTemplateContent(template: String) = this::class.java.classLoader.getResource(template).readText()
 
-    return setPackageName(getTemplateContent(template), packageName).replace(Regex("_(\\w|\\d)+_")) {
-        replacements[it.value]!!
-    }
+  return setPackageName(getTemplateContent(template), packageName).replace(Regex("_(\\w|\\d)+_")) {
+    replacements[it.value]!!
+  }
 }
 
 class SharedSequenceProcessor : AbstractProcessor() {
@@ -34,16 +34,16 @@ class SharedSequenceProcessor : AbstractProcessor() {
       val sharedSequenceName = el.getAnnotation(SharedSequence::class.java).value
 
       var replacements = hashMapOf(
-              "_Template_" to sharedSequenceName,
-              "_scheduler_" to "$objectName.scheduler",
-              "_share_" to "$objectName.share"
+        "_Template_" to sharedSequenceName,
+        "_scheduler_" to "$objectName.scheduler",
+        "_share_" to "$objectName.share"
       )
 
-      val source = processTemplate("template.kt", pckg, replacements)
+      val source = processTemplate("templates/Template.kt", pckg, replacements)
 
       //processingEnv.messager.printMessage(Diagnostic.Kind.NOTE, replacedSource)
 
-      File("$kotlinGenerated/$objectName.kt/${pckg.replace(".", "/")}", "${sharedSequenceName}.kt").apply {
+      File("$kotlinGenerated/$objectName.kt/${pckg.replace(".", "/")}", "$sharedSequenceName.kt").apply {
         parentFile.mkdirs()
         writeText(source)
       }
@@ -64,11 +64,11 @@ class SharedSequenceProcessor : AbstractProcessor() {
         val pckg = processingEnv.elementUtils.getPackageOf(el1).qualifiedName.toString()
 
         var replacements = hashMapOf(
-                "_Template_" to sharedSequenceName1,
-                "_Template2_" to sharedSequenceName2
+          "_Template_" to sharedSequenceName1,
+          "_Template2_" to sharedSequenceName2
         )
 
-        val source = processTemplate("templatetemplate.kt", pckg, replacements)
+        val source = processTemplate("templates/Template2Template.kt", pckg, replacements)
 
         File("$kotlinGenerated/$objectName1+$objectName2.kt/${pckg.replace(".", "/")}", "$sharedSequenceName1+$sharedSequenceName2.kt").apply {
           parentFile.mkdirs()
