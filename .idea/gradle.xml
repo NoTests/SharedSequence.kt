@@ -8,10 +8,10 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/SharedSequence" />
             <option value="$PROJECT_DIR$/SharedSequenceApi" />
             <option value="$PROJECT_DIR$/SharedSequenceProcessor" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/sharedsequence" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

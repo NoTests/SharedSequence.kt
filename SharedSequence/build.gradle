@@ -7,23 +7,23 @@ ext {
     bintrayName = 'SharedSequence'
 
     publishedGroupId = 'org.notests'
-    libraryName = 'sharedsequence'
-    artifact = 'sharedsequence'
+    libraryName = 'SharedSequence'
+    artifact = 'SharedSequence'
 
     libraryDescription = 'Shared sequence'
 
     siteUrl = 'https://github.com/NoTests/SharedSequence.kt'
     gitUrl = 'https://github.com/NoTests/SharedSequence.kt.git'
 
-    libraryVersion = '0.1.1'
+    libraryVersion = '0.1.3'
 
     developerId = 'notests'
     developerName = 'Marko Bozic'
     developerEmail = 'markotron@gmail.com'
 
-    licenseName = 'The Apache Software License, Version 2.0'
-    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    allLicenses = ["Apache-2.0"]
+    licenseName = 'MIT'
+    licenseUrl = 'https://github.com/NoTests/SharedSequence.kt/blob/master/LICENSE'
+    allLicenses = ["MIT"]
 }
 
 android {
