@@ -1,6 +1,5 @@
-package org.notests.sharedsequence.annotations
+package org.notests.sharedsequence.api
 
-import io.reactivex.Notification
 import io.reactivex.Observable
 
 fun <Element> Observable<Element>.debug(id: String, logger: (String) -> Unit): Observable<Element> =

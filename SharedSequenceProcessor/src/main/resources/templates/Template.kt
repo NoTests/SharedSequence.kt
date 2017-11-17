@@ -3,9 +3,9 @@ package templates
 import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.functions.BiFunction
-import org.notests.sharedsequence.annotations.ErrorReporting
-import org.notests.sharedsequence.annotations.debug
-import org.notests.sharedsequence.annotations.doOnSubscribed
+import org.notests.sharedsequence.api.ErrorReporting
+import org.notests.sharedsequence.api.debug
+import org.notests.sharedsequence.api.doOnSubscribed
 import java.util.concurrent.TimeUnit
 
 open class _Template_<Element> constructor(source: Observable<Element>) {

@@ -1,4 +1,4 @@
-package org.notests.sharedsequence.annotations
+package org.notests.sharedsequence.api
 
 /**
  * Created by markotron on 11/6/17.

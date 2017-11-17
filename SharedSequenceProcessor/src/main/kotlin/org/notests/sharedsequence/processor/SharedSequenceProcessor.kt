@@ -1,15 +1,11 @@
 package org.notests.sharedsequence.processor
 
-import org.notests.sharedsequence.annotations.SharedSequence
+import org.notests.sharedsequence.api.SharedSequence
 import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
-import javax.lang.model.type.TypeKind
 import javax.tools.Diagnostic
 
 
