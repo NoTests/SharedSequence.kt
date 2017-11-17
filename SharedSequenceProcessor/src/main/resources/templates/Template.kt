@@ -48,7 +48,7 @@ fun <Element> _Template_.Companion.merge(sources: Iterable<_Template_<out Elemen
   try {
     _Template_(Observable.merge(sources.map { it.source }))
   } catch (e: Exception) {
-    ErrorReporting.fatalErrorInDebugOrReportError(e)
+    ErrorReporting.report(e)
     this.empty()
   }
 
@@ -65,7 +65,7 @@ fun <Element> _Template_<Element>.defer(factory: () -> _Template_<Element>) =
     try {
       factory().source
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       Observable.empty<Element>()
     }
   })
@@ -75,7 +75,7 @@ fun <Element> _Template_<Element>.filter(predicate: (Element) -> Boolean): _Temp
     try {
       predicate(it)
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       false
     }
   })
@@ -85,7 +85,7 @@ fun <Element, Result> _Template_<Element>.map(func: (Element) -> Result): _Templ
     try {
       Observable.just(func(it))
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       Observable.empty<Result>()
     }
   })
@@ -96,7 +96,7 @@ fun <Element, Key : Comparable<Key>> _Template_<Element>.distinctUntilChanged(
     try {
       keySelector(lhs).compareTo(keySelector(rhs)) == 0
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       false
     }
   })
@@ -106,7 +106,7 @@ fun <Element> _Template_<Element>.distinctUntilChanged(comparator: (Element, Ele
     try {
       comparator(lhs, rhs)
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       false
     }
   })
@@ -119,7 +119,7 @@ fun <Element, Result> _Template_<Element>.scan(initialValue: Result, accumulator
     try {
       accumulator(result, element)
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       result
     }
   }))
@@ -129,7 +129,7 @@ fun <Element> _Template_<Element>.doOnNext(onNext: (Element) -> Unit): _Template
     try {
       onNext(it)
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
     }
   })
 
@@ -138,7 +138,7 @@ fun <Element> _Template_<Element>.doOnCompleted(onCompleted: () -> Unit): _Templ
     try {
       onCompleted()
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
     }
   })
 
@@ -147,7 +147,7 @@ fun <Element> _Template_<Element>.doOnSubscribe(onSubscribe: () -> Unit): _Templ
     try {
       onSubscribe()
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
     }
   })
 
@@ -156,7 +156,7 @@ fun <Element> _Template_<Element>.doOnSubscribed(onSubscribed: () -> Unit): _Tem
     try {
       onSubscribed()
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
     }
   })
 

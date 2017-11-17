@@ -21,7 +21,7 @@ fun <Element, Result> _Template_<Element>.flatMap(func: (Element) -> _Template2_
     try {
       func(it).source
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       Observable.empty<Result>()
     }
   })
@@ -31,7 +31,7 @@ fun <Element, Result> _Template_<Element>.switchMap(func: (Element) -> _Template
     try {
       func(it).source
     } catch (e: Exception) {
-      ErrorReporting.fatalErrorInDebugOrReportError(e)
+      ErrorReporting.report(e)
       Observable.empty<Result>()
     }
   })
