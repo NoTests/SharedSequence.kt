@@ -4,7 +4,7 @@ apply plugin: 'kotlin'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile project(":SharedSequenceAnnotations")
+    compile project(":SharedSequenceApi")
 
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.6'

@@ -71,7 +71,7 @@ dependencies {
     compile group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.0.1'
 
     kapt project(":SharedSequenceProcessor")
-    compile project(":SharedSequenceAnnotations")
+    compile project(":SharedSequenceApi")
 }
 
 apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'

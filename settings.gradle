@@ -1,1 +1,1 @@
-include ':app', ':SharedSequenceProcessor', ':sharedsequence', ':SharedSequenceAnnotations'
+include ':app', ':SharedSequenceProcessor', ':SharedSequence', ':SharedSequenceApi'
