@@ -1,9 +1,9 @@
-package org.notests.sharedsequence
+package org.notests.sharedsequence.annotations
 
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.lang.Exception
-import java.lang.RuntimeException
+import kotlin.RuntimeException
 
 /**
  * Created by markotron on 11/6/17.
@@ -24,7 +24,7 @@ object ErrorReporting {
     try {
       return action()
     } catch (e: Exception) {
-      this.fatalErrorInDebugOrReportError(e)
+      fatalErrorInDebugOrReportError(e)
       throw e
     }
   }
@@ -33,24 +33,24 @@ object ErrorReporting {
     return try {
       action()
     } catch (e: Exception) {
-      this.fatalErrorInDebugOrReportError(e)
+      fatalErrorInDebugOrReportError(e)
       default
     }
   }
 
   fun fatalErrorInDebugOrReportError(message: String) {
-    this.fatalErrorInDebugOrReportError(kotlin.RuntimeException(message), true)
+    fatalErrorInDebugOrReportError(RuntimeException(message), true)
   }
 
   fun fatalErrorInDebugOrReportError(throwable: Throwable) {
-    this.fatalErrorInDebugOrReportError(throwable, true)
+    fatalErrorInDebugOrReportError(throwable, true)
   }
 
   fun <T> fatalErrorInDebugOrReportError(default: T, action: () -> T): T {
     return try {
       action()
     } catch (e: Exception) {
-      this.fatalErrorInDebugOrReportError(e, true)
+      fatalErrorInDebugOrReportError(e, true)
       default
     }
   }

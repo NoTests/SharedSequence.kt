@@ -5,7 +5,7 @@ package templates
  */
 import io.reactivex.Observable
 import io.reactivex.functions.BiFunction
-import org.notests.sharedsequence.ErrorReporting
+import org.notests.sharedsequence.annotations.ErrorReporting
 
 fun <Element, SequenceOfElements: _Template2_<Element>> _Template_<SequenceOfElements>.switchOnNext(): _Template2_<Element> =
   _Template2_<Element>(Observable.switchOnNext(this.source.map { it.asObservable() }))

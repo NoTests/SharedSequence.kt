@@ -1,4 +1,4 @@
-package org.notests.sharedsequence
+package org.notests.sharedsequence.annotations
 
 import io.reactivex.Notification
 import io.reactivex.Observable

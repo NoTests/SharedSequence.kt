@@ -4,6 +4,7 @@ import io.reactivex.Observable
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import org.notests.sharedsequence.annotations.SharedSequence
+import org.notests.sharedsequence.annotations.SharingTrait
 
 /**
  * Created by markotron on 11/6/17.

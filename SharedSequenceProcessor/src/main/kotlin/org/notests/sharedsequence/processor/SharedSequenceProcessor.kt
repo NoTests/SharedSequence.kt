@@ -5,7 +5,11 @@ import java.io.File
 import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
+import javax.lang.model.element.ElementKind
+import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import javax.lang.model.element.VariableElement
+import javax.lang.model.type.TypeKind
 import javax.tools.Diagnostic
 
 
@@ -23,7 +27,21 @@ fun SharedSequenceProcessor.processTemplate(template: String, packageName: Strin
 class SharedSequenceProcessor : AbstractProcessor() {
   override fun process(annotations: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
 
-    processingEnv.messager.printMessage(Diagnostic.Kind.NOTE, "Started")
+//    val sharingTraitsType = processingEnv
+//      .elementUtils
+//      .getTypeElement("org.notests.sharedsequence.annotations.SharingTraits")
+////      .getTypeElement("java.io.Serializable")
+//      .asType()
+//
+//    fun isExtendingSharingSequence(el: TypeElement) = processingEnv
+//      .typeUtils
+//      .isAssignable(el.asType(), sharingTraitsType)
+
+    fun areMethodsStatic(el: TypeElement): Boolean {
+      el.enclosedElements.forEach { processingEnv.messager.printMessage(Diagnostic.Kind.MANDATORY_WARNING, el.modifiers.toString()) }
+      return true
+    }
+
     val kotlinGenerated = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION]
 
     val annotatedClasses = env.getElementsAnnotatedWith(SharedSequence::class.java)
@@ -32,6 +50,11 @@ class SharedSequenceProcessor : AbstractProcessor() {
       val pckg = processingEnv.elementUtils.getPackageOf(el).qualifiedName.toString()
       val objectName = el.simpleName.toString()
       val sharedSequenceName = el.getAnnotation(SharedSequence::class.java).value
+
+      /* VALIDATORS */
+//      if (!isExtendingSharingSequence(el))
+//        throw Exception("The object should extend a SharingTraitsInterface")
+      areMethodsStatic(el)
 
       var replacements = hashMapOf(
         "_Template_" to sharedSequenceName,
