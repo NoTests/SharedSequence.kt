@@ -24,10 +24,10 @@ open class _Template_<Element> constructor(source: Observable<Element>) {
 }
 
 fun <Element> Observable<Element>.as_Template_(onError: _Template_<Element>) =
-        _Template_(this.onErrorResumeNext(onError.asObservable()))
+  _Template_(this.onErrorResumeNext(onError.asObservable()).observeOn(_Template_.scheduler))
 
 fun <Element> Observable<Element>.as_Template_(onError: (Throwable) -> _Template_<Element>) =
-        _Template_(this.onErrorResumeNext { error: Throwable -> onError(error).asObservable() })
+  _Template_(this.onErrorResumeNext { error: Throwable -> onError(error).asObservable() }.observeOn(_Template_.scheduler))
 
 fun <Element> _Template_<Element>.debug(id: String,
                                         logger: (String) -> Unit): _Template_<Element> =
