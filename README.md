@@ -107,7 +107,6 @@ suggestions = RxTextView  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
   .switchMap { SuggestionsService.getSuggestionsAsObservable(it) } // 3. 
       
-
 suggestions
   .observeOn(AndroidSchedulers.mainThread()) // 6.
   .subscribe { suggestions_tv.text = it.joinToString("\n") } // 4.
