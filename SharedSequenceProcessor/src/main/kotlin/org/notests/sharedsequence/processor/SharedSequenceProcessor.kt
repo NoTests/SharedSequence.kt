@@ -6,8 +6,6 @@ import javax.annotation.processing.AbstractProcessor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.TypeElement
-import javax.tools.Diagnostic
-
 
 fun SharedSequenceProcessor.processTemplate(template: String, packageName: String, replacements: HashMap<String, String>): String {
   fun setPackageName(template: String, packageName: String): String =
@@ -23,20 +21,8 @@ fun SharedSequenceProcessor.processTemplate(template: String, packageName: Strin
 class SharedSequenceProcessor : AbstractProcessor() {
   override fun process(annotations: MutableSet<out TypeElement>, env: RoundEnvironment): Boolean {
 
-//    val sharingTraitsType = processingEnv
-//      .elementUtils
-//      .getTypeElement("org.notests.sharedsequence.annotations.SharingTraits")
-////      .getTypeElement("java.io.Serializable")
-//      .asType()
-//
-//    fun isExtendingSharingSequence(el: TypeElement) = processingEnv
-//      .typeUtils
-//      .isAssignable(el.asType(), sharingTraitsType)
-
-    fun areMethodsStatic(el: TypeElement): Boolean {
-      el.enclosedElements.forEach { processingEnv.messager.printMessage(Diagnostic.Kind.MANDATORY_WARNING, el.modifiers.toString()) }
-      return true
-    }
+    fun isExtendingSharingSequence(el: TypeElement) =
+      el.interfaces.filter { it.toString() == SHARING_TRAIT_INTERFACE_NAME }.size == 1
 
     val kotlinGenerated = processingEnv.options[KAPT_KOTLIN_GENERATED_OPTION]
 
@@ -48,9 +34,8 @@ class SharedSequenceProcessor : AbstractProcessor() {
       val sharedSequenceName = el.getAnnotation(SharedSequence::class.java).value
 
       /* VALIDATORS */
-//      if (!isExtendingSharingSequence(el))
-//        throw Exception("The object should extend a SharingTraitsInterface")
-      areMethodsStatic(el)
+      if (!isExtendingSharingSequence(el))
+        throw Exception("The object $el should extend a SharingTraitsInterface")
 
       var replacements = hashMapOf(
         "_Template_" to sharedSequenceName,
@@ -105,5 +90,6 @@ class SharedSequenceProcessor : AbstractProcessor() {
   companion object {
     val GENERATE_KOTLIN_CODE_OPTION = "generate.kotlin.code"
     val KAPT_KOTLIN_GENERATED_OPTION = "kapt.kotlin.generated"
+    val SHARING_TRAIT_INTERFACE_NAME = "org.notests.sharedsequence.api.SharingTrait"
   }
 }
