@@ -35,7 +35,7 @@ strategy `.replay(1).refCount()`.
 
 To clarify this definition we will look at a concrete example. 
 
-*Problem* Assume that you want to create a search input field which suggests result while you type. 
+*Problem.* Assume that you want to create a search input field which suggests result while you type. 
 The field queries your server and displays a list of results and its size.
 
 While solving this problem you should take care of
@@ -43,7 +43,7 @@ While solving this problem you should take care of
 - error handling (1) 
 - not spamming your server with unnecessary requests (2)
 
-To simplify the code we will mock server call like this:
+To simplify the code we will mock server-side requests like this:
 
 ```kotlin
 object SuggestionsService {
@@ -56,7 +56,7 @@ object SuggestionsService {
     // Sometimes the server will return an error
     if (Random().nextInt(5) == 2) throw RuntimeException("Simulating network errors")
     
-    // If no error return a random number of results
+    // If no error, return a random number of results
     val resultsNo = Random().nextInt(10)
     return (1..resultsNo).map { "${query}_result_$it" }
   }
@@ -84,7 +84,7 @@ suggestions
   .subscribe { size_tv.text = it.size.toString() } // 5.
 ```
 
-1. We're using the `rxbindings` to get the sequence of `TextEdit` text changes and map it to a 
+1. We're using the `rxbindings` to get the sequence of `TextEdit`'s text changes and map it to a 
 sequence of strings.
 2. We throttle the sequence to prevent spamming, thus solving (2)
 3. We use `switchMap` to unsubscribe from the previous observable (i.e. canceling the old request) 
@@ -117,7 +117,7 @@ suggestions
   .subscribe { size_tv.text = it.size.toString() } // 5.
 ```
 
-6. Touching the UI happens on the main thread and the app doesn't crash (all the time!)
+6. Touching the UI happens on the main thread and the app doesn't crash (or does it?)
 
 Well, it crashes when the `getSuggestionsAsObservable` throws an error because we're not handling 
 errors at all. 
@@ -277,7 +277,7 @@ suggestions
 ```
 
 1. We transform our observable into a `driver`. When doing so, we have to specify what happens when 
-the observable errors out, thus making the driver safe!
+the observable errors out, thus making it safe!
 2. Driver's `switchMap` lambda must return another shared sequence which means that the returning 
 value is safe. 
 3. We know that the driver observes on a main thread, no need to specify it explicitly. Note that
