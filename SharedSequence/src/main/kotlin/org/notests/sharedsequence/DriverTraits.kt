@@ -7,12 +7,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import org.notests.sharedsequence.api.SharedSequence
 import org.notests.sharedsequence.api.SharingTrait
-import org.reactivestreams.Subscription
 
 /**
  * Created by markotron on 11/6/17.
  */
-
 @SharedSequence("Driver")
 object DriverTraits : SharingTrait {
   override val scheduler: Scheduler
