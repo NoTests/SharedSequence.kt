@@ -11,6 +11,12 @@ https://github.com/ReactiveX/RxSwift/blob/master/Documentation/Traits.md
 on a specific thread. We say that the observable is **safe** if it can't error out, i.e. the 
 `onError` is never called.
 
+Some shared sequence operators accept lambdas as parameters (`map`, `filter`, ...). What if the 
+lambda you send as a parameter in this operators throws? Will it make the observable unsafe? The 
+answer is no! These operators will catch your errors and emmit them via the 
+`ErrorReporting.exceptions()` observable. There you can subscribe and analyse your exceptions - 
+usually, crashing your app in DEBUG mode, and log-and-ignore the exception in RELEASE mode.
+
 Shared sequence is an abstract construct and to define a concrete implementation you need two 
 things:
 
@@ -75,7 +81,6 @@ suggestions = RxTextView  // 1.
   .map { it.toString() }  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
   .switchMap { SuggestionsService.getSuggestionsAsObservable(it) } // 3. 
-      
 
 suggestions
   .subscribe { suggestions_tv.text = it.joinToString("\n") } // 4.
@@ -119,7 +124,7 @@ suggestions
 6. Touching the UI happens on the main thread and the app doesn't crash (or does it?)
 
 Well, it crashes when the `getSuggestionsAsObservable` throws an error because we're not handling 
-errors at all. 
+errors at all. Let's fix it!
 
 *Attempt 3.*
 ```kotlin
@@ -129,7 +134,6 @@ suggestions = RxTextView  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
   .switchMap { SuggestionsService.getSuggestionsAsObservable(it) } // 3. 
   .onErrorResumeNext(Observable.just(listOf())) // 7.
-      
 
 suggestions
   .observeOn(AndroidSchedulers.mainThread()) // 6.
@@ -143,9 +147,9 @@ suggestions
 7. When the error happens just continue with the empty list. 
 
 Now the app doesn't crash! That's because our `suggestions` observable is *safe*! That's the 
-property we want. However, if you input something in the search field, you'll probably get something. 
-But, if you repeat the process several times, you'll stop getting results. That's because, when
-we get an error, we unsubscribe from the original `observable` and subscribe to a new one
+property we want. However, if you input something in the search field, you'll probably get some 
+results. But, if you repeat the process several times, you'll stop getting results. That's because, 
+when we get an error, we unsubscribe from the original `observable` and subscribe to a new one
 (`Observable.just(listOf())`) which completes immediately. This means that we've unsubscribed from
 `RxTextView.textChanges(search_et)` and no new strings are emmited.
  
@@ -165,7 +169,6 @@ suggestions = RxTextView  // 1.
       .onErrorResumeNext(Observable.just(listOf())) // 8. 
    }  
   // .onErrorResumeNext(Observable.just(listOf())) // 7.
-      
 
 suggestions
   .observeOn(AndroidSchedulers.mainThread()) // 6.
@@ -176,12 +179,12 @@ suggestions
   .subscribe { size_tv.text = it.size.toString() } // 5.
 ```
 
-8. No the network errors are handled and we never unsubscribe from our `textChanges`, thus solving 
+8. Now the network errors are handled and we never unsubscribe from our `textChanges`, thus solving 
 (1).
 
-We're not done. You probably noticed that the displayed result count don't match the actual result
-count. And that's because, when subscribing, we're creating two different execution chains and every
-time a string is emmited, our function `getSuggestionsAsObservable` gets called twice! Usually 
+We're not done. You probably noticed that **the displayed result count don't match the actual result
+count**. And that's because, when subscribing, we're creating two different execution chains and 
+every time a string is emmited, our function `getSuggestionsAsObservable` gets called twice! Usually 
 returning two different result sets. We have to share our sequence.
  
 *Attempt 5. (Solution)*
@@ -198,7 +201,6 @@ suggestions = RxTextView  // 1.
   // .onErrorResumeNext(Observable.just(listOf())) // 7.
   .replay(1)  // 9.
   .refCount() // 9.
-      
 
 suggestions
   .observeOn(AndroidSchedulers.mainThread()) // 6.
@@ -222,24 +224,22 @@ We built an observable with the following properties:
 
 Basically, we've built a **driver**. 
 
-Even though it's not hard to build a robust solution without *drevers*, by using it we guaranty 
+Even though it's not hard to build a robust solution without *drivers*, by using it we guaranty 
 at compile time that our observables have desired properties. Let's see how it looks like.
 
 *Attempt 6. (Solution with drivers)*
 
 ```kotlin
-val mapper = { s: String -> 
-  SuggestionsService
-    .getSuggestionsAsObservable(s)
-    .asDriver(Driver.just(listOf())) // 2.
-}
-
 suggestions = RxTextView
   .textChanges(search_et)
   .asDriver(Driver.empty()) // 1.
   .map { it.toString() }
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-  .switchMap(mapper) // 2.
+  .switchMapDriver { // 2.
+    SuggestionsService
+      .getSuggestionsAsObservable(it)
+      .asDriver(Driver.just(listOf()))
+  }
   
 suggestions
   .drive { suggestions_tv.text = it.joinToString("\n") } // 3. 
@@ -251,7 +251,8 @@ suggestions
 1. We transform our observable into a `driver`. When doing so, we have to specify what happens when 
 the observable errors out, thus making it safe!
 2. Driver's `switchMap` lambda must return another shared sequence which means that the returning 
-value is safe. 
+value is safe. To make it more explicit we call it `switchMapDriver`, meaning that its lambda 
+returns a `Driver` (as opposed to `switchMapSignal` which returns a `Signal`)
 3. We know that the driver observes on a main thread, no need to specify it explicitly. Note that
 the `subscribe` method is renamed to `drive`. In this way, when you see an observable with a `drive`
 method that compiles, you know that all the properties are satisfied. 
@@ -264,4 +265,4 @@ strategy `.share()`.
 ## Custom shared sequences
 
 To generate your own shared sequence you only need to specify a scheduler and a sharing strategy. 
-Check the `SharedSequence` module and copy the `Driver` and `Signal`. 
+Check the `SharedSequence` module (`DriverTraits` and `SignalTraits`). 

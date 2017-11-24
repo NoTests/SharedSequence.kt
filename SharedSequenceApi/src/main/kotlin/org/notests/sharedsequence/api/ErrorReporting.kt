@@ -11,5 +11,7 @@ object ErrorReporting {
   fun report(throwable: Throwable) {
     reportingSubject.onNext(throwable)
   }
+
+  fun exceptions() = reportingSubject
 }
 

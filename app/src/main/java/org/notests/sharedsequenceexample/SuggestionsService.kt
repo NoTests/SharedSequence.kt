@@ -3,9 +3,6 @@ package org.notests.sharedsequenceexample
 import android.util.Log
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import org.notests.sharedsequence.Driver
-import org.notests.sharedsequence.asDriver
-import org.notests.sharedsequence.just
 import java.util.*
 
 /**
@@ -25,13 +22,6 @@ object SuggestionsService {
     Log.d("NUMBER OF RESULTS", resultsNo.toString())
 
     return (1..resultsNo).map { "${query}_result_$it" }
-  }
-
-  fun getSuggestionsAsDriver(query: String): Driver<List<String>> {
-    return Observable
-      .defer { Observable.just(getSuggestions(query)) }
-      .subscribeOn(Schedulers.computation())
-      .asDriver(Driver.just(listOf()))
   }
 
   fun getSuggestionsAsObservable(query: String): Observable<List<String>> {
