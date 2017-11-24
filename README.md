@@ -266,3 +266,24 @@ strategy `.share()`.
 
 To generate your own shared sequence you only need to specify a scheduler and a sharing strategy. 
 Check the `SharedSequence` module (`DriverTraits` and `SignalTraits`). 
+
+## How to include it?
+
+Add this maven repo
+```groovy
+repositories { 
+    maven { 
+        url "https://dl.bintray.com/markotron/maven" 
+    } 
+}
+```
+
+Include whatever you need: 
+```groovy
+compile 'org.notests:SharedSequence:0.1.4'
+```
+or
+```groovy
+compile 'org.notests:SharedSequenceApi:0.1.4'
+kapt 'org.notests:SharedSequenceProcessor:0.1.4'
+```
