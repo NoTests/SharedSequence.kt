@@ -25,12 +25,15 @@ class MainActivity : AppCompatActivity() {
   override fun onStart() {
     super.onStart()
 
+    val mapper = { s: String -> SuggestionsService.getSuggestionsAsObservable(s).asDriver(Driver.just(listOf())) }
+
     suggestions = RxTextView
       .textChanges(search_et)
       .asDriver(Driver.empty())
       .map { it.toString() }
       .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-      .switchMap(SuggestionsService::getSuggestionsAsDriver)
+//      .switchMap { s: String -> SuggestionsService.getSuggestionsAsObservable(s).asDriver(Driver.just(listOf<String>())) }
+      .switchMap(mapper)
 
     disposableBag.add(
       suggestions
