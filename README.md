@@ -13,8 +13,8 @@ on a specific thread. We say that the observable is **safe** if it can't error o
 
 Some shared sequence operators accept lambdas as parameters (`map`, `filter`, ...). What if the 
 lambda you send as a parameter in this operators throws? Will it make the observable unsafe? The 
-answer is no! These operators will catch your errors and emmit them via the 
-`ErrorReporting.exceptions()` observable. There you can subscribe and analyse your exceptions - 
+answer is no! These operators will catch your errors and emit them via the 
+`ErrorReporting.exceptions()` observable. There you can subscribe and analyze your exceptions - 
 usually, crashing your app in DEBUG mode, and log-and-ignore the exception in RELEASE mode.
 
 Shared sequence is an abstract construct and to define a concrete implementation you need two 
@@ -27,7 +27,7 @@ This repo consists of 4 modules:
 
 - `SharedSequence` - Consists of most common shared sequence implementations: `Driver` and `Signal`. 
 This module uses `SharedSequenceApi` and `SharedSequenceProcessor` to generate these 
-implementations. In most cases you'll only need to include this module in your app. It also serves 
+implementations. In most cases, you'll only need to include this module in your app. It also serves 
 as an example of how to use `SharedSequenceApi` and `SharedSequenceProcessor` to generate custom 
 shared sequences. 
 - `SharedSequenceApi` - Public API for generating shared sequences.
@@ -97,8 +97,8 @@ and subscribe to a new observable (i.e. making a new request).
 4. We subscribe to the `suggestions` observable to get and display all the results.
 5. We subscribe to the `suggestions` observable to get and display the result size.
 
-Although, the solution looks readable, it's far from correct. It will compile but the app crashes as 
-soon as you open it. Of course it crashes, we're touching the UI on a `computation` thread (the 
+Although the solution looks readable, it's far from correct. It will compile but the app crashes as 
+soon as you open it. Of course, it crashes, we're touching the UI on a `computation` thread (the 
 thread `getSuggestionsAsObservable` subscribes on).
   
 **When working with the UI, you usually want to observe on the main thread!** Only side-effects and 
@@ -151,7 +151,7 @@ property we want. However, if you input something in the search field, you'll pr
 results. But, if you repeat the process several times, you'll stop getting results. That's because, 
 when we get an error, we unsubscribe from the original `observable` and subscribe to a new one
 (`Observable.just(listOf())`) which completes immediately. This means that we've unsubscribed from
-`RxTextView.textChanges(search_et)` and no new strings are emmited.
+`RxTextView.textChanges(search_et)` and no new strings are emited.
  
 When you think about it, `RxTextView.textChanges(search_et)` should be safe by design. The 
 problematic observable is `SuggestionsService.getSuggestionsAsObservable(it)`! **This is the one 
@@ -182,9 +182,9 @@ suggestions
 8. Now the network errors are handled and we never unsubscribe from our `textChanges`, thus solving 
 (1).
 
-We're not done. You probably noticed that **the displayed result count don't match the actual result
+We're not done. You probably noticed that **the displayed result count doesn't match the actual result
 count**. And that's because, when subscribing, we're creating two different execution chains and 
-every time a string is emmited, our function `getSuggestionsAsObservable` gets called twice! Usually 
+every time a string is emited, our function `getSuggestionsAsObservable` gets called twice! Usually 
 returning two different result sets. We have to share our sequence.
  
 *Attempt 5. (Solution)*
@@ -219,8 +219,8 @@ Finally, we have a robust solution. Let's think about what we have built and how
 We built an observable with the following properties: 
 
 1. it can't error out, i.e. it's safe
-2. observes on a main thread
-3. it's shared between different subscribers. 
+2. observes on the main thread
+3. it's shared among different subscribers. 
 
 Basically, we've built a **driver**. 
 
@@ -253,7 +253,7 @@ the observable errors out, thus making it safe!
 2. Driver's `switchMap` lambda must return another shared sequence which means that the returning 
 value is safe. To make it more explicit we call it `switchMapDriver`, meaning that its lambda 
 returns a `Driver` (as opposed to `switchMapSignal` which returns a `Signal`)
-3. We know that the driver observes on a main thread, no need to specify it explicitly. Note that
+3. We know that the driver observes on the main thread, no need to specify it explicitly. Note that
 the `subscribe` method is renamed to `drive`. In this way, when you see an observable with a `drive`
 method that compiles, you know that all the properties are satisfied. 
 
