@@ -25,7 +25,11 @@ class MainActivity : AppCompatActivity() {
   override fun onStart() {
     super.onStart()
 
-    val mapper = { s: String -> SuggestionsService.getSuggestionsAsObservable(s).asDriver(Driver.just(listOf())) }
+    val mapper = { s: String ->
+      SuggestionsService
+        .getSuggestionsAsObservable(s)
+        .asDriver(Driver.just(listOf()))
+    }
 
     suggestions = RxTextView
       .textChanges(search_et)

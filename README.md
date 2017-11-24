@@ -10,7 +10,7 @@ https://github.com/ReactiveX/RxSwift/blob/master/Documentation/Traits.md
 *Definition 1.* **Shared sequence** is a safe observable with a specific sharing strategy observing 
 on a specific thread. We say that the observable is **safe** if it can't error out, i.e. the 
 `onError` is never called.
- 
+
 Shared sequence is an abstract construct and to define a concrete implementation you need two 
 things:
 
@@ -227,46 +227,19 @@ at compile time that our observables have desired properties. Let's see how it l
 
 *Attempt 6. (Solution with drivers)*
 
-We add a new function in our `SuggestionsService`
-
 ```kotlin
-object SuggestionsService {
-
-  private fun getSuggestions(query: String): List<String> {
-
-    val sleepMillis = Random().nextInt(1000).toLong()
-    Thread.sleep(sleepMillis)
-
-    if (Random().nextInt(5) == 2) throw RuntimeException("Simulating network errors")
-
-    val resultsNo = Random().nextInt(10)
-
-    return (1..resultsNo).map { "${query}_result_$it" }
-  }
-
-  fun getSuggestionsAsDriver(query: String): Driver<List<String>> {
-    return Observable
-      .defer { Observable.just(getSuggestions(query)) }
-      .subscribeOn(Schedulers.computation())
-      .asDriver(Driver.just(listOf()))
-  }
-
-  fun getSuggestionsAsObservable(query: String): Observable<List<String>> {
-    return Observable
-      .defer { Observable.just(getSuggestions(query)) }
-      .subscribeOn(Schedulers.computation())
-  }
+val mapper = { s: String -> 
+  SuggestionsService
+    .getSuggestionsAsObservable(s)
+    .asDriver(Driver.just(listOf())) // 2.
 }
-```
-Now we have, 
 
-```kotlin
 suggestions = RxTextView
   .textChanges(search_et)
+  .asDriver(Driver.empty()) // 1.
   .map { it.toString() }
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-  .asDriver(Driver.empty()) // 1.
-  .switchMap(SuggestionsService::getSuggestionsAsDriver) // 2.
+  .switchMap(mapper) // 2.
   
 suggestions
   .drive { suggestions_tv.text = it.joinToString("\n") } // 3. 
