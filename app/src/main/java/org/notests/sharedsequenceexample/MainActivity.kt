@@ -4,13 +4,9 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.jakewharton.rxbinding2.widget.RxTextView
-import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import org.notests.sharedsequence.*
-import org.notests.sharedsequence.api.debug
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -31,9 +27,9 @@ class MainActivity : AppCompatActivity() {
 
     suggestions = RxTextView
       .textChanges(search_et)
+      .asDriver(Driver.empty())
       .map { it.toString() }
       .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-      .asDriver(Driver.empty())
       .switchMap(SuggestionsService::getSuggestionsAsDriver)
 
     disposableBag.add(

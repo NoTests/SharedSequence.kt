@@ -124,6 +124,9 @@ fun <Element, Result> _Template_<Element>.scan(initialValue: Result, accumulator
     }
   }))
 
+fun <Element> _Template_<Element>.throttleWithTimeout(timeout: Long, timeUnit: TimeUnit): _Template_<Element> =
+  _Template_(this.source.throttleWithTimeout(timeout, timeUnit))
+
 fun <Element> _Template_<Element>.doOnNext(onNext: (Element) -> Unit): _Template_<Element> =
   _Template_<Element>(this.source.doOnNext {
     try {
