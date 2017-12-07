@@ -35,7 +35,7 @@ class SharedSequenceProcessor : AbstractProcessor() {
 
       /* VALIDATORS */
       if (!isExtendingSharingSequence(el))
-        throw Exception("The object $el should extend a SharingTraitsInterface")
+        throw Exception("The object $el should extend a SharingTraits interface")
 
       var replacements = hashMapOf(
         "_Template_" to sharedSequenceName,

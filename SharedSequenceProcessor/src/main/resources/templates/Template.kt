@@ -60,7 +60,7 @@ fun <T1, T2, R> _Template_.Companion.zip(o1: _Template_<T1>, o2: _Template_<T2>,
 
 // operations
 
-fun <Element> _Template_<Element>.defer(factory: () -> _Template_<Element>) =
+fun <Element> _Template_.Companion.defer(factory: () -> _Template_<Element>) =
   _Template_(Observable.defer {
     try {
       factory().source

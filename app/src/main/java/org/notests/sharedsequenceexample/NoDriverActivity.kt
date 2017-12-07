@@ -28,19 +28,19 @@ class NoDriverActivity : AppCompatActivity() {
       .textChanges(search_et)
       .map { it.toString() }
       .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
-      .switchMap { SuggestionsService.getSuggestionsAsObservable(it).onErrorResumeNext(Observable.just(listOf())) } // 2. ovdje ide onErrorResumeNext
-      .replay(1).refCount()                                                                 // 3. Ako ne zelimo da se dva puta poziva
-//      .onErrorResumeNext(Observable.just(listOf()))                                                 // 2. Ovo nije dobro jer se stream dispose-a cim se error desi. Daljnja tipkanja nista ne rade.
+      .switchMap { SuggestionsService.getSuggestions(it).onErrorResumeNext(Observable.just(listOf())) }
+      .replay(1).refCount()
+//      .onErrorResumeNext(Observable.just(listOf()))
 
     disposableBag.add(
       suggestions
-        .observeOn(AndroidSchedulers.mainThread())                                                    // 1. Na ovo treba paziti
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { suggestions_tv.text = it.joinToString("\n") }
     )
 
     disposableBag.add(
       suggestions
-        .observeOn(AndroidSchedulers.mainThread())                                                    // 1. Na ovo treba paziti
+        .observeOn(AndroidSchedulers.mainThread())
         .subscribe { size_tv.text = it.size.toString() }
     )
   }

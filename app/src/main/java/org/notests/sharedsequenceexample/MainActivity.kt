@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
       .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
       .switchMapDriver {
         SuggestionsService
-          .getSuggestionsAsObservable(it)
+          .getSuggestions(it)
           .asDriver(Driver.just(listOf()))
       }
 
