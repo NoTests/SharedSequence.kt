@@ -11,6 +11,10 @@ https://github.com/ReactiveX/RxSwift/blob/master/Documentation/Traits.md
 on a specific thread. We say that the observable is **safe** if it can't error out, i.e. the 
 `onError` is never called.
 
+This library includes two default implementations of the shared sequence:
+* Driver - models state propagation
+* Signal - models event bus
+
 Some shared sequence operators accept lambdas as parameters (`map`, `filter`, ...). What if the 
 lambda you send as a parameter in this operators throws? Will it make the observable unsafe? The 
 answer is no! These operators will catch your errors and emit them via the 
@@ -36,51 +40,25 @@ shared sequences.
 
 ## Driver
 
-*Definition 2.* **Driver** is a shared sequence observing on a **main** thread with a sharing 
-strategy `.replay(1).refCount()`.
-
-To clarify this definition we will look at a concrete example. 
+Let's look at a concrete example. 
 
 *Problem.* Assume that you want to create a search input field which suggests result while you type. 
 The field queries your server and displays a list of results and its size.
 
-While solving this problem you should take care of
-
-- error handling (1) 
-- not spamming your server with unnecessary requests (2)
-
-To simplify the code we will mock server-side requests like this:
-
-```kotlin
-object SuggestionsService {
-
-  private fun getSuggestions(query: String): List<String> {
-    // Random response time
-    val sleepMillis = Random().nextInt(1000).toLong()
-    Thread.sleep(sleepMillis)
-    
-    // Sometimes the server will return an error
-    if (Random().nextInt(5) == 2) throw RuntimeException("Simulating network errors")
-    
-    // If no error, return a random number of results
-    val resultsNo = Random().nextInt(10)
-    return (1..resultsNo).map { "${query}_result_$it" }
-  }
-
-  fun getSuggestionsAsObservable(query: String): Observable<List<String>> =
-    Observable
-      .defer { Observable.just(getSuggestions(query)) }
-      .subscribeOn(Schedulers.computation())
-}
-```
+A typical approach would look something like this, but unfortunatelly it has some flaws.
 
 *Attempt 1.*
 ```kotlin
+object SuggestionsService {
+  // this observable sequence can fail, e.g. network failure
+  fun getSuggestions(query: String): Observable<List<String>>
+}
+
 suggestions = RxTextView  // 1.
   .textChanges(search_et) // 1.
   .map { it.toString() }  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
-  .switchMap { SuggestionsService.getSuggestionsAsObservable(it) } // 3. 
+  .switchMap { SuggestionsService.getSuggestions(it) } // 3. 
 
 suggestions
   .subscribe { suggestions_tv.text = it.joinToString("\n") } // 4.
@@ -91,7 +69,7 @@ suggestions
 
 1. We're using the `rxbindings` to get the sequence of `TextEdit`'s text changes and map it to a 
 sequence of strings.
-2. We throttle the sequence to prevent spamming, thus solving (2)
+2. We throttle the sequence to prevent spamming
 3. We use `switchMap` to unsubscribe from the previous observable (i.e. canceling the old request) 
 and subscribe to a new observable (i.e. making a new request).
 4. We subscribe to the `suggestions` observable to get and display all the results.
@@ -99,7 +77,7 @@ and subscribe to a new observable (i.e. making a new request).
 
 Although the solution looks readable, it's far from correct. It will compile but the app crashes as 
 soon as you open it. Of course, it crashes, we're touching the UI on a `computation` thread (the 
-thread `getSuggestionsAsObservable` subscribes on).
+thread `getSuggestions` subscribes on).
   
 **When working with the UI, you usually want to observe on the main thread!** Only side-effects and 
 complex computations should work on different threads.
@@ -110,7 +88,7 @@ suggestions = RxTextView  // 1.
   .textChanges(search_et) // 1.
   .map { it.toString() }  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
-  .switchMap { SuggestionsService.getSuggestionsAsObservable(it) } // 3. 
+  .switchMap { SuggestionsService.getSuggestions(it) } // 3. 
       
 suggestions
   .observeOn(AndroidSchedulers.mainThread()) // 6.
@@ -123,7 +101,7 @@ suggestions
 
 6. Touching the UI happens on the main thread and the app doesn't crash (or does it?)
 
-Well, it crashes when the `getSuggestionsAsObservable` throws an error because we're not handling 
+Well, it crashes when the `getSuggestions` throws an error because we're not handling 
 errors at all. Let's fix it!
 
 *Attempt 3.*
@@ -132,7 +110,7 @@ suggestions = RxTextView  // 1.
   .textChanges(search_et) // 1.
   .map { it.toString() }  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
-  .switchMap { SuggestionsService.getSuggestionsAsObservable(it) } // 3. 
+  .switchMap { SuggestionsService.getSuggestions(it) } // 3. 
   .onErrorResumeNext(Observable.just(listOf())) // 7.
 
 suggestions
@@ -154,7 +132,7 @@ when we get an error, we unsubscribe from the original `observable` and subscrib
 `RxTextView.textChanges(search_et)` and no new strings are emited.
  
 When you think about it, `RxTextView.textChanges(search_et)` should be safe by design. The 
-problematic observable is `SuggestionsService.getSuggestionsAsObservable(it)`! **This is the one 
+problematic observable is `SuggestionsService.getSuggestions(it)`! **This is the one 
 that should be safe!**
 
 *Attempt 4.*
@@ -165,7 +143,7 @@ suggestions = RxTextView  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
   .switchMap { // 3. 
     SuggestionsService
-      .getSuggestionsAsObservable(it)
+      .getSuggestions(it)
       .onErrorResumeNext(Observable.just(listOf())) // 8. 
    }  
   // .onErrorResumeNext(Observable.just(listOf())) // 7.
@@ -179,12 +157,11 @@ suggestions
   .subscribe { size_tv.text = it.size.toString() } // 5.
 ```
 
-8. Now the network errors are handled and we never unsubscribe from our `textChanges`, thus solving 
-(1).
+8. Now the network errors are handled and we never unsubscribe from our `textChanges`.
 
 We're not done. You probably noticed that **the displayed result count doesn't match the actual result
 count**. And that's because, when subscribing, we're creating two different execution chains and 
-every time a string is emited, our function `getSuggestionsAsObservable` gets called twice! Usually 
+every time a string is emited, our function `getSuggestions` gets called twice! Usually 
 returning two different result sets. We have to share our sequence.
  
 *Attempt 5. (Solution)*
@@ -195,7 +172,7 @@ suggestions = RxTextView  // 1.
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS) // 2.
   .switchMap { // 3. 
     SuggestionsService
-      .getSuggestionsAsObservable(it)
+      .getSuggestions(it)
       .onErrorResumeNext(Observable.just(listOf())) // 8. 
    }  
   // .onErrorResumeNext(Observable.just(listOf())) // 7.
@@ -224,6 +201,9 @@ We built an observable with the following properties:
 
 Basically, we've built a **driver**. 
 
+*Definition 2.* **Driver** is a shared sequence observing on a **main** thread with a sharing 
+strategy `.replay(1).refCount()`.
+
 Even though it's not hard to build a robust solution without *drivers*, by using it we guaranty 
 at compile time that our observables have desired properties. Let's see how it looks like.
 
@@ -237,7 +217,7 @@ suggestions = RxTextView
   .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
   .switchMapDriver { // 2.
     SuggestionsService
-      .getSuggestionsAsObservable(it)
+      .getSuggestions(it)
       .asDriver(Driver.just(listOf()))
   }
   
