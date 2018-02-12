@@ -1,0 +1,18 @@
+/**
+ * Shared file between builds so that they can all use the same dependencies and
+ * maven repositories.
+ **/
+ext.versions = [:]
+
+def versions = [:]
+versions.rxjava2 = '2.1.9'
+versions.rx_android = '2.0.1'
+versions.kotlin = '1.2.21'
+versions.espresso = '3.0.1'
+versions.support = '26.1.0'
+versions.junit = '4.12'
+versions.test_runner = '1.0.1'
+versions.constraint_layout = '1.0.2'
+versions.rxbinding = '2.0.0'
+
+ext.versions = versions
