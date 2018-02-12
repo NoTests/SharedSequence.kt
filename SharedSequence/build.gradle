@@ -1,30 +1,9 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.github.dcendents.android-maven'
 
-ext {
-    bintrayRepo = 'maven'
-    bintrayName = 'SharedSequence'
-
-    publishedGroupId = 'org.notests'
-    libraryName = 'SharedSequence'
-    artifact = 'SharedSequence'
-
-    libraryDescription = 'Shared sequence'
-
-    siteUrl = 'https://github.com/NoTests/SharedSequence.kt'
-    gitUrl = 'https://github.com/NoTests/SharedSequence.kt.git'
-
-    libraryVersion = '0.1.4'
-
-    developerId = 'notests'
-    developerName = 'Marko Bozic'
-    developerEmail = 'markotron@gmail.com'
-
-    licenseName = 'MIT'
-    licenseUrl = 'https://github.com/NoTests/SharedSequence.kt/blob/master/LICENSE'
-    allLicenses = ["MIT"]
-}
+group = 'com.github.NoTests'
 
 android {
     compileSdkVersion 26
@@ -61,18 +40,15 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation 'com.android.support:appcompat-v7:26.1.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
-    compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.6'
-    compile group: 'io.reactivex.rxjava2', name: 'rxandroid', version: '2.0.1'
+    implementation 'com.android.support:appcompat-v7:' + versions.support
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jre8:' + versions.kotlin
+    implementation 'io.reactivex.rxjava2:rxjava:' + versions.rxjava2
+    implementation 'io.reactivex.rxjava2:rxandroid:' + versions.rx_android
 
     kapt project(":SharedSequenceProcessor")
-    compile project(":SharedSequenceApi")
-}
+    api project(":SharedSequenceApi")
 
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+    testImplementation 'junit:junit:' + versions.junit
+    androidTestImplementation 'com.android.support.test:runner:' + versions.test_runner
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + versions.espresso
+}
