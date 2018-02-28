@@ -24,7 +24,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-
         }
     }
 
@@ -32,7 +31,8 @@ android {
 
     sourceSets {
         main.java.srcDirs += "src/main/kotlin"
-        main.java.srcDirs += "${buildDir.absolutePath}/generated/source/kaptKotlin/"
+        debug.java.srcDirs += "${buildDir.absolutePath}/generated/source/kaptKotlin/debug"
+        release.java.srcDirs += "${buildDir.absolutePath}/generated/source/kaptKotlin/release"
     }
 
 }
