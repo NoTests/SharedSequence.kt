@@ -251,19 +251,20 @@ Check the `SharedSequence` module (`DriverTraits` and `SignalTraits`).
 
 Add this maven repo
 ```groovy
-repositories { 
-    maven { 
-        url "https://dl.bintray.com/markotron/maven" 
-    } 
+allprojects {
+	repositories {
+		...
+		maven { url 'https://jitpack.io' }
+	}
 }
 ```
 
 Include whatever you need: 
 ```groovy
-compile 'org.notests:SharedSequence:0.1.4'
+implementation 'com.github.NoTests.SharedSequence.kt:SharedSequence:0.1.6'
 ```
 or
 ```groovy
-compile 'org.notests:SharedSequenceApi:0.1.4'
-kapt 'org.notests:SharedSequenceProcessor:0.1.4'
+compile 'com.github.NoTests:SharedSequenceApi:0.1.6'
+kapt 'com.github.NoTests:SharedSequenceProcessor:0.1.6'
 ```
