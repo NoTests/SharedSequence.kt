@@ -265,6 +265,6 @@ implementation 'com.github.NoTests.SharedSequence.kt:SharedSequence:0.1.6'
 ```
 or
 ```groovy
-implementation 'com.github.NoTests:SharedSequenceApi:0.1.6'
-kapt 'com.github.NoTests:SharedSequenceProcessor:0.1.6'
+implementation 'com.github.NoTests.SharedSequence.kt:SharedSequenceApi:0.1.6'
+kapt 'com.github.NoTests.SharedSequence.kt:SharedSequenceProcessor:0.1.6'
 ```
