@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/NoTests/SharedSequence.kt.svg)](https://jitpack.io/#NoTests/SharedSequence.kt)
+
 # SharedSequence.kt
 
 Adaptation of RxCocoa `SharedSequence`-s (`Driver`, `Signal`) for RxJava.
