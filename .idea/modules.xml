@@ -4,9 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SharedSequence/SharedSequence.iml" filepath="$PROJECT_DIR$/SharedSequence/SharedSequence.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequence.kt.iml" filepath="$PROJECT_DIR$/SharedSequence.kt.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SharedSequenceAnnotations/SharedSequenceAnnotations.iml" filepath="$PROJECT_DIR$/SharedSequenceAnnotations/SharedSequenceAnnotations.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceApi/SharedSequenceApi.iml" filepath="$PROJECT_DIR$/SharedSequenceApi/SharedSequenceApi.iml" />
-      <module fileurl="file://$PROJECT_DIR$/SharedSequenceExample.iml" filepath="$PROJECT_DIR$/SharedSequenceExample.iml" />
       <module fileurl="file://$PROJECT_DIR$/SharedSequenceProcessor/SharedSequenceProcessor.iml" filepath="$PROJECT_DIR$/SharedSequenceProcessor/SharedSequenceProcessor.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
