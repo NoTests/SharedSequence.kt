@@ -261,7 +261,6 @@ allprojects {
 }
 ```
 
-
 Include whatever you need: 
 ```groovy
 implementation 'com.github.NoTests.SharedSequence.kt:SharedSequence:0.1.8'
