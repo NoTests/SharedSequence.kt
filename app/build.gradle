@@ -10,7 +10,6 @@ android {
 		targetSdkVersion 26
 		versionCode 1
 		versionName "1.0"
-		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 	}
 	buildTypes {
 		release {
@@ -33,8 +32,4 @@ dependencies {
 	implementation project(":SharedSequence")
 	implementation 'com.jakewharton.rxbinding2:rxbinding:' + versions.rxbinding
 	implementation 'io.reactivex.rxjava2:rxandroid:' + versions.rx_android
-
-	testImplementation 'junit:junit:' + versions.junit
-	androidTestImplementation 'com.android.support.test:runner:' + versions.test_runner
-	androidTestImplementation 'com.android.support.test.espresso:espresso-core:' + versions.espresso
 }
