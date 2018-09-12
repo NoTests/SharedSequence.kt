@@ -3,21 +3,9 @@ package org.notests.sharedsequence
 import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.TestScheduler
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.notests.sharedsequence.api.ErrorReporting
-import org.notests.sharedsequence.utils.MyTestSubscriber
-import org.notests.sharedsequence.utils.TestSchedulerRule
-import org.notests.sharedsequence.utils.advanceTimeBy
-import org.notests.sharedsequence.utils.complete
-import org.notests.sharedsequence.utils.createColdObservable
-import org.notests.sharedsequence.utils.createMyTestSubscriber
-import org.notests.sharedsequence.utils.error
-import org.notests.sharedsequence.utils.next
-import org.notests.sharedsequence.utils.scheduleAt
+import org.notests.sharedsequence.utils.*
 
 /**
  * Created by juraj begovac on 13/9/18
@@ -39,6 +27,26 @@ class DriverTest : Assert() {
   @After
   fun tearDown() {
     observer.dispose()
+  }
+
+  @Test
+  fun drive_WhenErroring() {
+
+    val exception = Exception("3 reached")
+
+    val errorObserver = scheduler.createMyTestSubscriber<Throwable>()
+    ErrorReporting.exceptions().subscribe(errorObserver)
+
+    val mutableList = mutableListOf<Int>()
+
+    observableRange()
+      .asDriverCompleteOnError()
+      // Even if we throw in the drive method we shouldn't unsubscribe. We should report the error
+      // via ErrorReporting and remain subscribed.
+      .drive { if(it == 3) throw exception else mutableList.add(it) }
+
+    assertEquals(listOf(next(0, exception)), errorObserver.recordedEvents())
+    assertEquals(listOf(1, 2, 4, 5, 6, 7, 8, 9, 10), mutableList)
   }
 
   @Test
