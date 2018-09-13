@@ -5,6 +5,7 @@ import io.reactivex.Observer
 import io.reactivex.Scheduler
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import org.notests.sharedsequence.api.ErrorReporting
 import org.notests.sharedsequence.api.SharedSequence
 import org.notests.sharedsequence.api.SharingTrait
 
@@ -21,7 +22,7 @@ object DriverTraits : SharingTrait {
 }
 
 fun <Element> Driver<Element>.drive(onNext: (Element) -> Unit = {}): Disposable =
-  this.asObservable().subscribe(onNext, {})
+  this.asObservable().subscribe(onNext) { ErrorReporting.report(it) }
 
 fun <Element> Driver<Element>.drive(observer: Observer<Element>): Unit =
   this.asObservable().subscribe(observer)
