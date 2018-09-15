@@ -12,7 +12,6 @@ import org.junit.runners.model.Statement
 /**
  * Created by juraj begovac on 13/9/18
  */
-
 class TestSchedulerRule : TestRule {
 
   private val immediate = object : Scheduler() {

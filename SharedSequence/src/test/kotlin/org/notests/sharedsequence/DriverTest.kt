@@ -52,7 +52,7 @@ class DriverTest : Assert() {
         .asDriverCompleteOnError()
         .drive(observer)
     }
-    scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -66,7 +66,7 @@ class DriverTest : Assert() {
   fun driverOnErrorJustReturn() {
     val returnOnError = 7
 
-    this.scheduler.scheduleAt(0) {
+    scheduler.scheduleAt(0) {
       observableRange()
         .map {
           if (it == 5) throw Exception()
@@ -75,7 +75,7 @@ class DriverTest : Assert() {
         .asDriver(returnOnError)
         .drive(observer)
     }
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -88,7 +88,7 @@ class DriverTest : Assert() {
 
   @Test
   fun driverOnErrorDriveWith() {
-    this.scheduler.scheduleAt(0) {
+    scheduler.scheduleAt(0) {
       observableRange()
         .map {
           if (it == 5) throw Exception()
@@ -97,7 +97,7 @@ class DriverTest : Assert() {
         .asDriver(observableRange().asDriverCompleteOnError())
         .drive(observer)
     }
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(
       listOf(next(0, 1),
@@ -120,11 +120,11 @@ class DriverTest : Assert() {
 
   @Test
   fun defer() {
-    this.scheduler.scheduleAt(0) {
+    scheduler.scheduleAt(0) {
       Driver.defer { observableRange().asDriverCompleteOnError() }
         .drive(observer)
     }
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(
       arrayListOf(
@@ -145,7 +145,7 @@ class DriverTest : Assert() {
   @Suppress("ConstantConditionIf")
   @Test
   fun deferOnErrorComplete() {
-    this.scheduler.scheduleAt(0) {
+    scheduler.scheduleAt(0) {
       Driver.defer {
         if (true) throw Exception()
         else
@@ -153,55 +153,14 @@ class DriverTest : Assert() {
       }
         .drive(observer)
     }
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
-    assertEquals(listOf(complete(0)), observer.recordedEvents())
-  }
-
-  @Suppress("ConstantConditionIf")
-  @Test
-  fun deferOnErrorJustReturn() {
-    this.scheduler.scheduleAt(0) {
-      Driver.defer {
-        if (true) throw Exception()
-        else
-          observableRange().asDriverCompleteOnError()
-      }
-        .drive(observer)
-    }
-    this.scheduler.advanceTimeBy(10)
-
-    assertEquals(listOf(complete(0)), observer.recordedEvents())
-  }
-
-  @Test
-  fun catchErrorAndCompleteWithoutError() {
-    this.scheduler.scheduleAt(0) {
-      observableRange()
-        .asDriverCompleteOnError()
-        .drive(observer)
-    }
-    this.scheduler.advanceTimeBy(10)
-
-    assertEquals(
-      listOf(
-        next(0, 1),
-        next(0, 2),
-        next(0, 3),
-        next(0, 4),
-        next(0, 5),
-        next(0, 6),
-        next(0, 7),
-        next(0, 8),
-        next(0, 9),
-        next(0, 10),
-        complete(0)),
-      observer.recordedEvents())
+    assertEquals(listOf(complete<Int>(0)), observer.recordedEvents())
   }
 
   @Test
   fun catchErrorAndComplete() {
-    this.scheduler.scheduleAt(0) {
+    scheduler.scheduleAt(0) {
       observableRange()
         .map {
           if (it == 5)
@@ -211,7 +170,7 @@ class DriverTest : Assert() {
         .asDriverCompleteOnError()
         .drive(observer)
     }
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(
       listOf(next(0, 1),
@@ -235,7 +194,7 @@ class DriverTest : Assert() {
       .asDriver(Driver.just(returnOnError))
       .drive(observer)
 
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -264,7 +223,7 @@ class DriverTest : Assert() {
       }
       .drive(observer)
 
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -293,7 +252,7 @@ class DriverTest : Assert() {
       }
       .drive(observer)
 
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -319,7 +278,7 @@ class DriverTest : Assert() {
       }
       .drive(observer)
 
-    this.scheduler.advanceTimeBy(10)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -335,7 +294,7 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testDriverSharing_WhenErroring() {
+  fun driverSharing_WhenErroring() {
     val observer1 = scheduler.createMyTestSubscriber<Int>()
     val observer2 = scheduler.createMyTestSubscriber<Int>()
     val observer3 = scheduler.createMyTestSubscriber<Int>()
@@ -344,7 +303,7 @@ class DriverTest : Assert() {
     var disposable2: Disposable? = null
     var disposable3: Disposable? = null
 
-    val coldObservable = scheduler.createColdObservable<Int>(
+    val coldObservable = scheduler.createColdObservable(
       next(10, 0),
       next(20, 1),
       next(30, 2),
@@ -404,7 +363,7 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testDriverSharing_WhenCompleted() {
+  fun driverSharing_WhenCompleted() {
     val observer1 = scheduler.createMyTestSubscriber<Int>()
     val observer2 = scheduler.createMyTestSubscriber<Int>()
     val observer3 = scheduler.createMyTestSubscriber<Int>()
@@ -413,7 +372,7 @@ class DriverTest : Assert() {
     var disposable2: Disposable? = null
     var disposable3: Disposable? = null
 
-    val coldObservable = scheduler.createColdObservable<Int>(
+    val coldObservable = scheduler.createColdObservable(
       next(10, 0),
       next(20, 1),
       next(30, 2),
@@ -472,13 +431,13 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_onErrorJustReturn() {
-    val source = scheduler.createColdObservable<Int>(next(0, 1), next(0, 2), error(0, Error("Test")))
+  fun asDriver_onErrorJustReturn() {
+    val source = scheduler.createColdObservable(next(0, 1), next(0, 2), error(0, Error("Test")))
 
     source.asDriver(-1)
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -488,13 +447,13 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_onErrorDriveWith() {
-    val source = scheduler.createColdObservable<Int>(next(0, 1), next(0, 2), error(0, Error("Test")))
+  fun asDriver_onErrorDriveWith() {
+    val source = scheduler.createColdObservable(next(0, 1), next(0, 2), error(0, Error("Test")))
 
     source.asDriver(Driver.just(-1))
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -504,13 +463,13 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_onErrorRecover() {
-    val source = scheduler.createColdObservable<Int>(next(0, 1), next(0, 2), error(0, Error("Test")))
+  fun asDriver_onErrorRecover() {
+    val source = scheduler.createColdObservable(next(0, 1), next(0, 2), error(0, Error("Test")))
 
     source.asDriver(Driver.empty())
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -519,13 +478,13 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_defer() {
-    val source = scheduler.createColdObservable<Int>(next(0, 1), next(0, 2), error(0, Error("Test")))
+  fun asDriver_defer() {
+    val source = scheduler.createColdObservable(next(0, 1), next(0, 2), error(0, Error("Test")))
 
     Driver.defer { source.asDriver(-1) }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -535,14 +494,14 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_map() {
-    val source = scheduler.createColdObservable<Int>(next(0, 1), next(0, 2), error(0, Error("Test")))
+  fun asDriver_map() {
+    val source = scheduler.createColdObservable(next(0, 1), next(0, 2), error(0, Error("Test")))
 
     source.asDriver(-1)
       .map { it + 1 }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 2),
                         next(0, 3),
@@ -552,14 +511,14 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_filter() {
-    val source = scheduler.createColdObservable<Int>(next(0, 1), next(0, 2), error(0, Error("Test")))
+  fun asDriver_filter() {
+    val source = scheduler.createColdObservable(next(0, 1), next(0, 2), error(0, Error("Test")))
 
     source.asDriver(-1)
       .filter { it % 2 == 0 }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 2),
                         complete(0)),
@@ -567,18 +526,18 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_switchMap() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 0),
-                                                         next(1, 1),
-                                                         error(2, Error("Test")),
-                                                         complete(3))
-    val observable1 = scheduler.createColdObservable<Int>(next(0, 1),
-                                                          next(0, 2),
-                                                          error(0, Error("Test")))
-    val observable2 = scheduler.createColdObservable<Int>(next(0, 10),
-                                                          next(0, 11),
-                                                          error(0, Error("Test")))
-    val errorObservable = scheduler.createColdObservable<Int>(complete(0))
+  fun asDriver_switchMap() {
+    val observable = scheduler.createColdObservable(next(0, 0),
+                                                    next(1, 1),
+                                                    error(2, Error("Test")),
+                                                    complete(3))
+    val observable1 = scheduler.createColdObservable(next(0, 1),
+                                                     next(0, 2),
+                                                     error(0, Error("Test")))
+    val observable2 = scheduler.createColdObservable(next(0, 10),
+                                                     next(0, 11),
+                                                     error(0, Error("Test")))
+    val errorObservable = scheduler.createColdObservable(complete<Int>(0))
 
     val drivers = arrayListOf(
       observable1.asDriver(-2),
@@ -602,18 +561,18 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_switchMap_overlapping() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 0),
-                                                         next(1, 1),
-                                                         error(2, Error("Test")),
-                                                         complete(3))
-    val observable1 = scheduler.createColdObservable<Int>(next(0, 1),
-                                                          error(0, Error("Test")),
-                                                          next(1, 2))
-    val observable2 = scheduler.createColdObservable<Int>(next(0, 10),
-                                                          error(0, Error("Test")),
-                                                          next(1, 11))
-    val errorObservable = scheduler.createColdObservable<Int>(complete(0))
+  fun asDriver_switchMap_overlapping() {
+    val observable = scheduler.createColdObservable(next(0, 0),
+                                                    next(1, 1),
+                                                    error(2, Error("Test")),
+                                                    complete(3))
+    val observable1 = scheduler.createColdObservable(next(0, 1),
+                                                     error(0, Error("Test")),
+                                                     next(1, 2))
+    val observable2 = scheduler.createColdObservable(next(0, 10),
+                                                     error(0, Error("Test")),
+                                                     next(1, 11))
+    val errorObservable = scheduler.createColdObservable(complete<Int>(0))
 
     val drivers = arrayListOf(observable1.asDriver(-2),
                               observable2.asDriver(-3),
@@ -634,10 +593,10 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_doOnNext() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 1),
-                                                         next(0, 2),
-                                                         error(0, Error("Test")))
+  fun asDriver_doOnNext() {
+    val observable = scheduler.createColdObservable(next(0, 1),
+                                                    next(0, 2),
+                                                    error(0, Error("Test")))
 
     var events = emptyArray<Int>()
 
@@ -647,7 +606,7 @@ class DriverTest : Assert() {
       }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -660,16 +619,16 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_distinctUntilChanged1() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 1),
-                                                         next(0, 2),
-                                                         next(0, 2),
-                                                         error(0, Error("Test")))
+  fun asDriver_distinctUntilChanged1() {
+    val observable = scheduler.createColdObservable(next(0, 1),
+                                                    next(0, 2),
+                                                    next(0, 2),
+                                                    error(0, Error("Test")))
     observable.asDriver(-1)
       .distinctUntilChanged()
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -679,16 +638,16 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_distinctUntilChanged2() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 1),
-                                                         next(0, 2),
-                                                         next(0, 2),
-                                                         error(0, Error("Test")))
+  fun asDriver_distinctUntilChanged2() {
+    val observable = scheduler.createColdObservable(next(0, 1),
+                                                    next(0, 2),
+                                                    next(0, 2),
+                                                    error(0, Error("Test")))
     observable.asDriver(-1)
       .distinctUntilChanged { e -> e }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -698,16 +657,16 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_distinctUntilChanged3() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 1),
-                                                         next(0, 2),
-                                                         next(0, 2),
-                                                         error(0, Error("Test")))
+  fun asDriver_distinctUntilChanged3() {
+    val observable = scheduler.createColdObservable(next(0, 1),
+                                                    next(0, 2),
+                                                    next(0, 2),
+                                                    error(0, Error("Test")))
     observable.asDriver(-1)
       .distinctUntilChanged { e1, e2 -> e1 == e2 }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 1),
                         next(0, 2),
@@ -717,17 +676,17 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_flatMap() {
-    val observable = scheduler.createColdObservable<Int>(next(0, 1),
-                                                         next(0, 2),
-                                                         error(0, Error("Test")))
+  fun asDriver_flatMap() {
+    val observable = scheduler.createColdObservable(next(0, 1),
+                                                    next(0, 2),
+                                                    error(0, Error("Test")))
     observable.asDriver(-1)
       .flatMapDriver {
         Driver.just(it + 1)
       }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 2),
                         next(0, 3),
@@ -737,39 +696,7 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_mergeSync() {
-    val factories: Array<(Driver<Int>) -> Driver<Int>> = arrayOf({ driver -> Driver.merge(arrayListOf(driver)) },
-                                                                 { driver -> Driver.merge(arrayListOf(driver)) },
-                                                                 { driver -> Driver.merge(arrayListOf(driver)) })
-
-    val observers = ArrayList<MyTestSubscriber<Int>>(factories.size)
-
-    factories.forEach {
-      val observable = scheduler.createColdObservable<Int>(
-        next(0, 1),
-        next(0, 2),
-        error(0, Error("Test")))
-      val driver = it(observable.asDriver(-1))
-
-      val observer = scheduler.createMyTestSubscriber<Int>()
-      driver.drive(observer)
-
-      observers.add(observer)
-    }
-
-    scheduler.advanceTimeBy(1)
-
-    observers.forEach {
-      assertEquals(listOf(next(0, 1),
-                          next(0, 2),
-                          next(0, -1),
-                          complete(0)),
-                   it.recordedEvents())
-    }
-  }
-
-  @Test
-  fun testAsDriver_merge() {
+  fun asDriver_merge() {
     val observable: Observable<Int> = scheduler.createColdObservable(next(0, 1),
                                                                      next(0, 2),
                                                                      error(0, Error("Test")))
@@ -777,7 +704,7 @@ class DriverTest : Assert() {
     Driver.merge(arrayListOf(observable.asDriver(-1).flatMapDriver { Driver.just(it + 1) }))
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 2),
                         next(0, 3),
@@ -787,7 +714,7 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_scan() {
+  fun asDriver_scan() {
     val observable: Observable<Int> = scheduler.createColdObservable(next(0, 1),
                                                                      next(0, 2),
                                                                      error(0, Error("Test")))
@@ -796,7 +723,7 @@ class DriverTest : Assert() {
       .scan(0) { a, n -> a + n }
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 0),
                         next(0, 1),
@@ -807,7 +734,7 @@ class DriverTest : Assert() {
   }
 
   @Test
-  fun testAsDriver_startWith() {
+  fun asDriver_startWith() {
     val observable: Observable<Int> = scheduler.createColdObservable(next(0, 1),
                                                                      next(0, 2),
                                                                      error(0, Error("Test")))
@@ -815,7 +742,7 @@ class DriverTest : Assert() {
       .startWith(0)
       .drive(observer)
 
-    scheduler.advanceTimeBy(1)
+    scheduler.triggerActions()
 
     assertEquals(listOf(next(0, 0),
                         next(0, 1),

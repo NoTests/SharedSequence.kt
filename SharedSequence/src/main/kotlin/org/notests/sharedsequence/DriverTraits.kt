@@ -25,5 +25,3 @@ fun <Element> Driver<Element>.drive(onNext: (Element) -> Unit = {}): Disposable 
 
 fun <Element> Driver<Element>.drive(observer: Observer<Element>): Unit =
   this.asObservable().subscribe(observer)
-
-
