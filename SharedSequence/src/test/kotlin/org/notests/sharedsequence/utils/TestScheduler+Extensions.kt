@@ -24,10 +24,10 @@ fun <T> TestScheduler.createColdObservable(vararg events: Recorded<Notification<
   events.map { (delay, value) ->
     Observable.timer(delay, TimeUnit.MILLISECONDS, this)
       .map {
-        when (value.notificationType()) {
-          is NotificationType.Next<*> -> Notification.createOnNext(value.value!!)
-          is NotificationType.Error   -> Notification.createOnError(value.error!!)
-          NotificationType.Complete   -> Notification.createOnComplete()
+        when {
+          value.isOnNext  -> Notification.createOnNext(value.value!!)
+          value.isOnError -> Notification.createOnError(value.error!!)
+          else            -> Notification.createOnComplete()
         }
       }
   }.merge().dematerialize()
@@ -39,17 +39,3 @@ fun TestScheduler.advanceTimeBy(delay: Long) =
   this.advanceTimeBy(delay, TimeUnit.MILLISECONDS)
 
 fun <T> TestScheduler.createMyTestSubscriber() = MyTestSubscriber<T>(this)
-
-private sealed class NotificationType {
-  data class Next<T>(val value: T) : NotificationType()
-  data class Error(val error: Throwable) : NotificationType()
-  object Complete : NotificationType()
-}
-
-private fun <T> Notification<T>.notificationType(): NotificationType {
-  if (isOnNext)
-    return NotificationType.Next(this.value!!)
-  if (isOnError)
-    return NotificationType.Error(this.error!!)
-  return NotificationType.Complete
-}
