@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
       .textChanges(search_et)
       .asDriver(Driver.empty())
       .map { it.toString() }
-      .throttleWithTimeout(300, TimeUnit.MILLISECONDS)
+      .debounce(300, TimeUnit.MILLISECONDS)
       .switchMapDriver {
         SuggestionsService
           .getSuggestions(it)
-          .asDriver(Driver.just(listOf()))
+          .asDriver(listOf())
       }
 
     disposableBag.add(

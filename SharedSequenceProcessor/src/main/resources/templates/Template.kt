@@ -29,6 +29,12 @@ fun <Element> Observable<Element>.as_Template_(onError: _Template_<Element>) =
 fun <Element> Observable<Element>.as_Template_(onError: (Throwable) -> _Template_<Element>) =
   _Template_(this.onErrorResumeNext { error: Throwable -> onError(error).asObservable() }.observeOn(_Template_.scheduler))
 
+fun <Element> Observable<Element>.as_Template_(onErrorJustReturn: Element) =
+  this.as_Template_(_Template_.just(onErrorJustReturn))
+
+fun <Element> Observable<Element>.as_Template_CompleteOnError() =
+  this.as_Template_(_Template_.empty())
+
 fun <Element> _Template_<Element>.debug(id: String,
                                         logger: (String) -> Unit): _Template_<Element> =
   _Template_(this.source.debug(id, logger))
