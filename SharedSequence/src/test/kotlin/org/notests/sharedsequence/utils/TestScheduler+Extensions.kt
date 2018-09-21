@@ -19,17 +19,10 @@ fun <T> error(delay: Long, error: Throwable): Recorded<Notification<T>> = Record
 
 fun <T> complete(delay: Long): Recorded<Notification<T>> = Recorded(delay, Notification.createOnComplete())
 
-@Suppress("UNCHECKED_CAST")
 fun <T> TestScheduler.createColdObservable(vararg events: Recorded<Notification<T>>): Observable<T> =
   events.map { (delay, value) ->
     Observable.timer(delay, TimeUnit.MILLISECONDS, this)
-      .map {
-        when {
-          value.isOnNext  -> Notification.createOnNext(value.value!!)
-          value.isOnError -> Notification.createOnError(value.error!!)
-          else            -> Notification.createOnComplete()
-        }
-      }
+      .map { value }
   }.merge().dematerialize()
 
 fun TestScheduler.scheduleAt(delay: Long, action: () -> Unit): Disposable =
