@@ -263,10 +263,10 @@ allprojects {
 
 Include whatever you need: 
 ```groovy
-implementation 'com.github.NoTests.SharedSequence.kt:SharedSequence:0.1.8'
+implementation 'com.github.NoTests.SharedSequence.kt:SharedSequence:0.1.13'
 ```
 or
 ```groovy
-implementation 'com.github.NoTests.SharedSequence.kt:SharedSequenceApi:0.1.8'
-kapt 'com.github.NoTests.SharedSequence.kt:SharedSequenceProcessor:0.1.8'
+implementation 'com.github.NoTests.SharedSequence.kt:SharedSequenceApi:0.1.13'
+kapt 'com.github.NoTests.SharedSequence.kt:SharedSequenceProcessor:0.1.13'
 ```
