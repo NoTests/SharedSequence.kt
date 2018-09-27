@@ -1,4 +1,6 @@
-[![](https://jitpack.io/v/NoTests/SharedSequence.kt.svg)](https://jitpack.io/#NoTests/SharedSequence.kt)
+[![CircleCI](https://circleci.com/gh/NoTests/SharedSequence.kt.svg?style=shield)](https://circleci.com/gh/NoTests/SharedSequence.kt) [![](https://jitpack.io/v/NoTests/SharedSequence.kt.svg)](https://jitpack.io/#NoTests/SharedSequence.kt)
+
+
 
 # SharedSequence.kt
 
