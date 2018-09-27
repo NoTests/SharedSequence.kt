@@ -1,0 +1,27 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/sharedsequence
+    docker:
+        - image: circleci/android:api-25-alpha
+    environment:
+        JVM_OPTS: -Xmx3200m
+    steps:
+          - checkout
+          - restore_cache:
+              key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum "Sharedsequence/build.gradle" }}-{{ checksum  "SharedsequenceApi/build.gradle" }}-{{ checksum "SharedsequenceProcessor/build.gradle" }}-{{ checksum "versions.gradle" }}
+          - run:
+              name: Download Dependencies
+              command: ./gradlew androidDependencies
+          - save_cache:
+              paths:
+                - ~/.gradle
+              key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum "Sharedsequence/build.gradle" }}-{{ checksum  "SharedsequenceApi/build.gradle" }}-{{ checksum "SharedsequenceProcessor/build.gradle" }}-{{ checksum "versions.gradle" }}
+          - run:
+              name: Run Tests
+              command: ./gradlew clean lint test
+          - store_artifacts:
+              path: Sharedsequence/build/reports
+              destination: reports
+          - store_test_results:
+              path: Sharedsequence/build/test-results
