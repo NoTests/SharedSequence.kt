@@ -15,7 +15,7 @@ import org.junit.runners.model.Statement
 class TestSchedulerRule : TestRule {
 
   private val immediate = object : Scheduler() {
-    override fun createWorker(): Worker = ExecutorScheduler(Runnable::run).createWorker()
+    override fun createWorker(): Worker = ExecutorScheduler(Runnable::run, false).createWorker()
   }
 
   val testScheduler = TestScheduler()
