@@ -31,13 +31,6 @@ android {
 
     flavorDimensions "mode"
 
-    sourceSets {
-        main.java.srcDirs += "src/main/kotlin"
-        test.java.srcDirs += 'src/test/kotlin'
-        debug.java.srcDirs += "${buildDir.absolutePath}/generated/source/kaptKotlin/debug"
-        release.java.srcDirs += "${buildDir.absolutePath}/generated/source/kaptKotlin/release"
-    }
-
     lintOptions {
         disable 'OldTargetApi'
     }
