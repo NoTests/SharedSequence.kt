@@ -753,10 +753,4 @@ class DriverTest : Assert() {
   }
 
   private fun observableRange() = Observable.range(1, 10)
-
-  private fun <Element> Observable<Element>.asDriverCompleteOnError(): Driver<Element> =
-    asDriver(Driver.empty())
-
-  private fun <Element> Observable<Element>.asDriver(onErrorJustReturn: Element): Driver<Element> =
-    asDriver(Driver.just(onErrorJustReturn))
 }
